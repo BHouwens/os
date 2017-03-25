@@ -3,6 +3,8 @@ global long_mode_start
 section .text
 bits 64
 long_mode_start:
+	; this file takes advantage of 64 bit code - much cleaner and terser
+
 	; load 0 into all data segment registers
 	; ensures that there's valid data in these segments
 	mov ax, 0
