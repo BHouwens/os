@@ -1,0 +1,20 @@
+[package]
+name = "my_os"
+version = "0.1.0"
+authors = ["Byron Houwens <zhion360@gmail.com>"]
+
+[lib]
+crate-type = ["staticlib"]
+
+# Used for 'cargo build'
+# Assigning panic to abort disables unwinding
+[profile.dev]
+panic = "abort"
+
+# Used for 'cargo build --release'
+[profile.release]
+panic = "abort"
+
+[dependencies]
+rlibc = "0.1.4"
+volatile = "0.1.0"

@@ -8,6 +8,9 @@ asm_source_files := $(wildcard src/arch/$(arch)/*.asm)
 asm_object_files := $(patsubst src/arch/$(arch)/%.asm, \
 	build/arch/$(arch)/%.o, $(assembly_source_files))
 
+target ?= $(arch)-unknown-linux-gnu
+rust_os := target/$(target)/debug/libblog_os.a
+
 .all: $(kernel)
 
 clean:
@@ -25,8 +28,12 @@ $(iso): $(kernel) $(grub_cfg)
 		@grub-mkrescue -o $(iso) build/isofiles 2> /dev/null
 		@rm -rf build/isofiles
 
-$(kernel): $(asm_object_files) $(linker_script)
-		@ld -n -T $(linker_script) -o $(kernel) $(asm_object_files)
+$(kernel): cargo $(rust_os) $(asm_object_files) $(linker_script)
+		@ld -n --gc-sections -T $(linker_script) -o $(kernel) \
+				$(asm_object_files) $(rust_os)
+
+cargo:
+		@cargo build --target $(target)
 
 
 # compile assembly files
