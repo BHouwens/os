@@ -1,4 +1,5 @@
 global start
+extern long_mode_start
 
 section .text
 bits 32
@@ -16,9 +17,7 @@ start:
     ; load the 64-bit GDT
     lgdt [gdt64.pointer]
 
-    ; prints 'OK' to the screen
-    mov dword [0xb8000], 0x2f4b2f4f ; 0xb8000 is the VGA text buffer - prints chars to screen from vid card
-    hlt
+    jmp gdt64.code:long_mode_start
 
 error:
     ; Prints 'ERR: ' and the error code to screen and then hangs
@@ -168,6 +167,7 @@ set_up_SSE:
 section .rodata
 gdt64:
     dq 0 ; zero entry
+.code: equ $ - gdt64 ; new
     dq (1<<43) | (1<<44) | (1<<47) | (1<<53) ; code segment
 .pointer:
     dw $ - gdt64 - 1
